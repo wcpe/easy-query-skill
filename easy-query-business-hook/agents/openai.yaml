@@ -1,0 +1,4 @@
+interface:
+  display_name: "EasyQuery Business Hook"
+  short_description: "Implement easy-query business code"
+  default_prompt: "Use $easy-query-business-hook to implement or review easy-query business code with MCP-first evidence and safe fallback ordering."
