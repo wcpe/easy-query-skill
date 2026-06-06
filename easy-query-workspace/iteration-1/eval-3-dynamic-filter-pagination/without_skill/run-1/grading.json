@@ -1,0 +1,46 @@
+{
+  "run_id": "eval-3-dynamic-filter-pagination-without_skill",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  },
+  "timing": {
+    "total_tokens": 27583,
+    "duration_ms": 62976,
+    "total_duration_seconds": 63.0
+  },
+  "expectations": [
+    {
+      "text": "gated dynamic conditions (cond,value overload)",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "pagination via toPageResult",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "stable order with id tiebreaker",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "reads getData/getTotal",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "notes deterministic/stable pagination ordering",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "no forbidden ORM symbols (MyBatis/JPA/QueryDSL)",
+      "passed": true,
+      "evidence": "matched"
+    }
+  ]
+}

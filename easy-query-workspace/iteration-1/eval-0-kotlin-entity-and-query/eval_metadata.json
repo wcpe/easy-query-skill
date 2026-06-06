@@ -1,0 +1,13 @@
+{
+  "eval_id": "eval-0-kotlin-entity-and-query",
+  "eval_name": "eval-0-kotlin-entity-and-query",
+  "prompt": "Kotlin: define Topic entity + query stars>100 desc createTime",
+  "assertions": [
+    "entity implements ProxyEntityAvailable",
+    "@Table and @EntityProxy present",
+    "Kotlin trailing-lambda where { }",
+    "uses Type::class.java",
+    "stars filter via .stars().gt",
+    "no forbidden ORM symbols (MyBatis/JPA/QueryDSL)"
+  ]
+}

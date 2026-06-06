@@ -1,0 +1,46 @@
+{
+  "run_id": "eval-1-kotlin-ksp-setup-with_skill",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  },
+  "timing": {
+    "total_tokens": 32081,
+    "duration_ms": 53689,
+    "total_duration_seconds": 53.7
+  },
+  "expectations": [
+    {
+      "text": "uses KSP processor (sql-ksp-processor)",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "KSP gradle plugin com.google.devtools.ksp",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "answers kapt question by choosing KSP (not kapt)",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "adds build/generated/ksp srcDir",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "init via EasyQueryBootstrapper + DefaultEasyEntityQuery",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "no forbidden ORM symbols (MyBatis/JPA/QueryDSL)",
+      "passed": true,
+      "evidence": "matched"
+    }
+  ]
+}

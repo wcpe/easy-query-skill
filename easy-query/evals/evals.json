@@ -1,0 +1,54 @@
+{
+  "skill_name": "easy-query",
+  "evals": [
+    {
+      "id": 0,
+      "name": "kotlin-entity-and-query",
+      "prompt": "我用 Kotlin 和 easy-query 这个 ORM。帮我定义一个 Topic 实体（表 t_topic，字段 id 主键 String、stars Int、title String、createTime），然后写一段查询：找出 stars 大于 100 的、按 createTime 倒序的前若干条，返回 List。给我能直接编译的 Kotlin 代码。",
+      "expected_output": "A Kotlin entity annotated @Table/@EntityProxy implementing ProxyEntityAvailable<Topic, TopicProxy>, plus a query using easyEntityQuery.queryable(Topic::class.java).where { it.stars().gt(100) }.orderBy { it.createTime().desc() }.toList(). No KAPT, no invented API.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "kotlin-ksp-setup",
+      "prompt": "我新建了一个 Kotlin Gradle 项目想接入 easy-query，连 MySQL。帮我写 build.gradle.kts 的依赖和插件配置，以及 main 里初始化 EasyEntityQuery 的代码。我之前用别的库是 kapt，这个也用 kapt 吗？",
+      "expected_output": "Gradle KSP setup (com.google.devtools.ksp plugin + ksp(\"com.easy-query:sql-ksp-processor\")), the kotlin.srcDir(\"build/generated/ksp/main/kotlin\") line, EasyQueryBootstrapper init with MySQLDatabaseConfiguration + DefaultEasyEntityQuery. Must explicitly say to use KSP, NOT kapt.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "java-spring-crud-service",
+      "prompt": "Spring Boot 项目，用的 easy-query。帮我写一个 UserService，包含：按手机号查唯一用户、新增用户、按 id 更新用户名。实体叫 SysUser（表 t_sys_user，字段 id 主键、username、phone）。顺便告诉我 application.yml 要配什么。",
+      "expected_output": "A @Service injecting EasyEntityQuery, using singleOrNull() for the unique phone lookup, insertable(...).executeRows(), updatable(SysUser.class).setColumns(...).where(id).executeRows(). application.yml with easy-query.enable=true, database, name-conversion. No JPA/MyBatis.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "dynamic-filter-pagination",
+      "prompt": "用 easy-query 写一个后台分页查询接口逻辑（Java）：根据可选的 name(模糊) 和 可选的状态 status、可选的创建时间区间过滤订单 Order，分页返回。要注意空参数不要拼进条件，分页要稳定。",
+      "expected_output": "Uses gated conditions (.like(condition, value) / where(condition, lambda)) so empty params are skipped, toPageResult(pageIndex,pageSize) with orderBy plus a stable tiebreaker (e.g. id), reads getData()/getTotal(). No string concatenation of SQL.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "transactional-multi-write",
+      "prompt": "easy-query，纯 Java（没有 Spring）。下单逻辑：插入一条 Order，同时把对应 Account 的 balance 扣减订单金额，必须在一个事务里，余额不足或扣款影响行数不对就回滚。帮我写出来。",
+      "expected_output": "try (Transaction tx = easyEntityQuery.beginTransaction()) { insertable(order).executeRows(); updatable(Account.class).setColumns(a -> a.balance().decrement(amount)).where(...).executeRows(1, msg); tx.commit(); }. Auto-rollback on exception. Uses decrement and a row-count assertion.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "write-unit-test",
+      "prompt": "帮我给一段 easy-query 的查询代码写单元测试，不想依赖外部数据库。实体是 Topic(t_topic: id, stars, title, createTime)。测试 stars>100 的过滤能查到正确数据。用 JUnit。",
+      "expected_output": "H2 in-memory setup (H2DatabaseConfiguration, jdbc:h2:mem with DB_CLOSE_DELAY=-1), code-first syncTableCommand(...).executeWithTransaction(arg -> arg.commit()), seed data, then a behavior assertion on the query result. Optionally mentions .toSQL() approach.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "relation-query-include",
+      "prompt": "easy-query 里，一个 SysUser 有多张 BankCard（一对多），我想查用户的同时把他的银行卡一起加载出来，避免 N+1。怎么定义关系、怎么查？给 Java 代码。",
+      "expected_output": "Entity field with @Navigate(value = RelationTypeEnum.OneToMany, selfProperty=..., targetProperty=...), and a query using .include(user -> user.bankCards()).toList(). Explains it avoids N+1. No manual loop querying.",
+      "files": []
+    }
+  ]
+}

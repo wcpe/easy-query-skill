@@ -1,0 +1,13 @@
+{
+  "eval_id": "eval-1-kotlin-ksp-setup",
+  "eval_name": "eval-1-kotlin-ksp-setup",
+  "prompt": "Kotlin Gradle easy-query setup; kapt or ksp?",
+  "assertions": [
+    "uses KSP processor (sql-ksp-processor)",
+    "KSP gradle plugin com.google.devtools.ksp",
+    "answers kapt question by choosing KSP (not kapt)",
+    "adds build/generated/ksp srcDir",
+    "init via EasyQueryBootstrapper + DefaultEasyEntityQuery",
+    "no forbidden ORM symbols (MyBatis/JPA/QueryDSL)"
+  ]
+}

@@ -1,1 +1,6 @@
 /.idea/
+# generated eval noise
+easy-query-workspace/desc-opt.log
+easy-query-workspace/*.html
+easy-query-workspace/iteration-*/review.html
+**/__pycache__/

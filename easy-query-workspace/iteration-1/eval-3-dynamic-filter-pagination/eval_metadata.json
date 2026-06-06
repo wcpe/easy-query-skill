@@ -1,0 +1,13 @@
+{
+  "eval_id": "eval-3-dynamic-filter-pagination",
+  "eval_name": "eval-3-dynamic-filter-pagination",
+  "prompt": "Java optional-filter paginated Order query",
+  "assertions": [
+    "gated dynamic conditions (cond,value overload)",
+    "pagination via toPageResult",
+    "stable order with id tiebreaker",
+    "reads getData/getTotal",
+    "notes deterministic/stable pagination ordering",
+    "no forbidden ORM symbols (MyBatis/JPA/QueryDSL)"
+  ]
+}

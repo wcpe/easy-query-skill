@@ -1,0 +1,46 @@
+{
+  "run_id": "eval-5-write-unit-test-with_skill",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  },
+  "timing": {
+    "total_tokens": 35871,
+    "duration_ms": 68470,
+    "total_duration_seconds": 68.5
+  },
+  "expectations": [
+    {
+      "text": "H2 in-memory datasource",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "H2DatabaseConfiguration dialect",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "code-first syncTableCommand",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "DB_CLOSE_DELAY keep-alive",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "behavior assertion (assertEquals/assertTrue)",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "no forbidden ORM symbols (MyBatis/JPA/QueryDSL)",
+      "passed": true,
+      "evidence": "matched"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "run_id": "eval-6-relation-query-include-without_skill",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  },
+  "timing": {
+    "total_tokens": 25937,
+    "duration_ms": 42630,
+    "total_duration_seconds": 42.6
+  },
+  "expectations": [
+    {
+      "text": "@Navigate OneToMany",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "eager load via .include(",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "explains avoiding N+1",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "entities implement ProxyEntityAvailable",
+      "passed": true,
+      "evidence": "matched"
+    },
+    {
+      "text": "no forbidden ORM symbols (MyBatis/JPA/QueryDSL)",
+      "passed": true,
+      "evidence": "matched"
+    }
+  ]
+}
