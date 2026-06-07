@@ -171,6 +171,47 @@ public class SlowSqlListener implements JdbcExecutorListener {
 ```
 (This is the same listener mechanism the test suite uses to capture and assert SQL — see `testing.md` §3.)
 
+## DB-function generated key — `generatedSQLColumnGenerator`
+
+When the **database** should produce the key via a SQL function on insert (vs. Java-side
+`PrimaryKeyGenerator` above), implement `GeneratedKeySQLColumnGenerator`
+(`com.easy.query.core.basic.extension.generated`) and bind it:
+
+```java
+public class DbNextIdGenerator implements GeneratedKeySQLColumnGenerator {
+    @Override public void configure(TableAvailable table, ColumnMetadata col,
+            SQLPropertyConverter conv, QueryRuntimeContext ctx) {
+        conv.sqlNativeSegment("mysqlNextId()");   // emitted into the INSERT VALUES
+    }
+}
+
+@Table("custom_increment")
+public class CustomIncrement {
+    @Column(primaryKey = true, generatedKey = true, generatedSQLColumnGenerator = DbNextIdGenerator.class)
+    private String id;          // INSERT INTO custom_increment (id, ...) VALUES (mysqlNextId(), ...)
+    private String name;
+}
+```
+
+## Behavior flags — `.configure(...)` (incl. smart-predicate)
+
+Per-query behavior toggles live in `EasyBehaviorEnum` (`com.easy.query.core.enums`) and are switched on/off
+via `.configure(s -> s.getBehavior().add(...) / .removeBehavior(...))`. Useful values:
+`SMART_PREDICATE` (push outer conditions down into subqueries/joins), `JDBC_LISTEN`, `IGNORE_VERSION`,
+`ON_DUPLICATE_KEY_UPDATE`, `EXECUTE_BATCH`.
+
+```java
+List<UserBankDTO> list = easyEntityQuery.queryable(SysUser.class)
+        .configure(s -> s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE))   // optimize pushdown
+        .innerJoin(SysBankCard.class, (u, c) -> u.id().eq(c.uid()))
+        .where((u, c) -> u.age().eq(18))
+        .select((u, c) -> new UserBankDTOProxy().name().set(u.name()).code().set(c.code()))
+        .where(dto -> dto.code().eq("123"))   // with SMART_PREDICATE this folds into the JOIN ON
+        .toList();
+```
+Smart-predicate lets you write conditions against the projected DTO and have them pushed into the inner
+query/join instead of wrapping everything in an outer subquery.
+
 ## Built-in SQL functions
 
 The proxy DSL exposes DB functions on column accessors (string/number/date/json/math), e.g.
@@ -192,7 +233,11 @@ rather than guessing a function name.
   `h2/H2BaseTest.java` (`applyShardingInitializer`). `DatabaseCodeFirst`/`CodeFirstCommand` @
   `com.easy.query.core.basic.api.database`. `PrimaryKeyGenerator` @ `com.easy.query.core.basic.extension.generated`;
   `TrackManager` @ `com.easy.query.core.basic.extension.track`; `JdbcExecutorListener` @
-  `com.easy.query.core.basic.extension.listener`.
+  `com.easy.query.core.basic.extension.listener`. `GeneratedKeySQLColumnGenerator` @
+  `com.easy.query.core.basic.extension.generated` (`@Column(generatedSQLColumnGenerator=...)`);
+  `EasyBehaviorEnum` (`SMART_PREDICATE`/`JDBC_LISTEN`/...) @ `com.easy.query.core.enums`, toggled via
+  `.configure(s -> s.getBehavior()...)` (`sql-test/.../QueryTest27.java`, `mysql8/MySQL8Test3.java`).
 - 官方文档: `easy-query-doc/src/ability/select/group.md`, `src/super/*` (sharding),
   `src/guide/sb-multi-datasource.md`, `src/guide/spring-boot.md` (code-first),
-  `src/adv/{auto-key,data-tracking,cte,jdbc-listener}.md`, `src/func/*` (SQL functions).
+  `src/adv/{auto-key,data-tracking,cte,jdbc-listener,smart-predicate,generated-key-sql-column}.md`,
+  `src/func/*` (SQL functions).

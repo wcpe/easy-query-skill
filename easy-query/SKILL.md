@@ -70,9 +70,11 @@ copy-ready code. Do not load all references at once.
 | **Transaction**: `beginTransaction` try-with-resources, Spring `@Transactional` | `references/transaction.md` |
 | **Write unit tests** (H2 in-memory + behavior, or MySQL + SQL-string assertion) | `references/testing.md` ★ |
 | **Interceptors**: auto-fill audit fields, multi-tenant filter, update-set hooks | `references/interceptors.md` |
-| **Field↔column mapping**: enum/JSON value converter, TypeHandler, column encryption | `references/type-mapping.md` |
-| **Request-object query**: `whereObject` (`@EasyWhereCondition`), dynamic sort, `@NavigateFlat` | `references/dto-query.md` |
-| **Advanced**: sharding, multi-datasource, code-first DDL, aggregate/groupBy, custom PK, data tracking, CTE, JDBC listener, SQL functions | `references/advanced.md` |
+| **Field↔column mapping**: enum/JSON value converter, TypeHandler, column encryption, `@ValueObject` | `references/type-mapping.md` (`@ValueObject` in `entity-mapping.md`) |
+| **Computed / derived columns**: `@Column(sqlExpression/sqlConversion)`, cross-table stat columns | `references/computed-properties.md` |
+| **Request-object query**: `whereObject` (`@EasyWhereCondition`), dynamic sort (`ObjectSort`), `@NavigateFlat` | `references/dto-query.md` |
+| **Caching** (sql-cache): `EasyCacheClient` kv/all storage, `@CacheEntitySchema`, invalidation | `references/caching.md` |
+| **Advanced**: sharding, multi-datasource, code-first DDL, aggregate/groupBy, custom PK, data tracking, CTE, JDBC listener, behavior flags (smart-predicate), SQL functions | `references/advanced.md` |
 | Look up an exact **symbol / method / package** | `references/api-index.md` |
 
 ## Evidence policy

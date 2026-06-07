@@ -114,6 +114,14 @@ public class TenantInterceptor implements PredicateFilterInterceptor {
 }
 ```
 
+## 操作审计日志（记录每次增删改）
+
+字段级审计（createBy/updateBy/时间）用上面的 `EntityInterceptor` / `UpdateSetInterceptor` 即可（已验证）。
+若要记录"每次 insert/update/delete 的完整操作日志"，官方文档（`adv/audit-log.md`）给出一套基于
+`EntityExpressionExecutor`（`com.easy.query.core.basic.jdbc.executor`，已存在）的执行后审计方案，文档示例里
+的 `DatabaseInterceptor` 接口**未在当前源码中定位到**——它可能随依赖版本/模块不同而存在差异，落地前请在
+你的实际 easy-query 版本里确认；优先用已验证的 `EntityInterceptor` 路线满足常见审计需求。
+
 ## 临时关闭拦截器
 
 单次查询/写入可用 `.noInterceptor()` 关闭全部，或 `.useInterceptor(name)` / `.noInterceptor(name)` 精确控制。

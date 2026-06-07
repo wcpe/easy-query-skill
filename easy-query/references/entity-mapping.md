@@ -108,6 +108,31 @@ class SysUser : ProxyEntityAvailable<SysUser, SysUserProxy> {
 - **`@Version`**: updates append `WHERE version = ?` and bump the version; a `0` row count means the row was
   changed concurrently. Controlled via `withVersion(...)` / `ignoreVersion()` — see `write.md`.
 
+## Value objects — `@ValueObject` (embed nested columns)
+
+Group several columns into a nested Java object while keeping them as flat columns in the same table. Mark
+the nested field `@ValueObject` (`com.easy.query.core.annotation`); it can nest further.
+
+```java
+@Table("my_company")
+@EntityProxy
+public class Company implements ProxyEntityAvailable<Company, CompanyProxy> {
+    @Column(primaryKey = true) private String id;
+    private String name;
+    @ValueObject private CompanyAddress address;   // province/city/area become columns of my_company
+}
+
+@Data
+public class CompanyAddress {   // plain class, not a @Table
+    private String province;
+    private String city;
+    private String area;
+}
+```
+Insert flattens it to `... (id, name, province, city, area) VALUES (...)`. Query nested props via the proxy
+(`o.address().province()`) or string path (`o.eq("address.province", "x")`); `select(o -> o.column("address"))`
+selects the whole group.
+
 ## Common mistakes
 
 - Missing `implements ProxyEntityAvailable<Entity, EntityProxy>` → no proxy, no strong-typed DSL.

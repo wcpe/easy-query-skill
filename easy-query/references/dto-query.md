@@ -53,10 +53,37 @@ List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
 
 ## 2. 动态排序（orderByObject）
 
-前端传"排序字段+方向"时，用动态排序对象避免把字段名直接拼进 SQL。easy-query 提供
-`ObjectSort`（包 `com.easy.query.core.api.dynamic.sort`）配合 `orderByObject(...)`。**务必对允许排序的
-字段做白名单**——严格模式只能挡掉非法字段，不等于业务白名单。详细用法见官方文档
-`easy-query-doc/src/dto-query/sort.md`（本节按需查阅，不要凭记忆臆造 API）。
+前端传"排序字段+方向"时，让请求对象实现 `ObjectSort`（包 `com.easy.query.core.api.dynamic.sort`），在
+`configure(ObjectSortBuilder)` 里把字段映射成排序项，再 `.orderByObject(请求对象)`。**务必用
+`builder.allowed(...)` 或自己的白名单约束可排序字段**——严格模式只能挡非法字段，不等于业务白名单。
+
+```java
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
+import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
+import com.easy.query.core.enums.OrderByModeEnum;
+
+@Data
+public class BlogSortRequest implements ObjectSort {
+    private String sort;     // 排序字段
+    private Boolean asc;     // 是否升序
+    @Override
+    public void configure(ObjectSortBuilder builder) {
+        if (EasyStringUtil.isNotBlank(sort)) {
+            builder.orderBy(sort, asc == null || asc);                       // 升/降序
+            // builder.orderBy(sort, asc == null || asc, OrderByModeEnum.NULLS_LAST); // 控制 NULL 顺序
+        }
+    }
+}
+
+List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+        .whereObject(filterRequest)        // 可与 whereObject 组合
+        .orderByObject(sortRequest)        // 动态排序
+        .toList();
+```
+
+多字段排序：在 `configure` 里循环多次 `builder.orderBy(prop, asc, OrderByModeEnum.NULLS_LAST)`。
+`ObjectSortBuilder` 还有 `allowed(prop)` / `notAllowed(prop)` 做字段白/黑名单。`orderByObject` 由
+`Orderable1` 提供，也有 `orderByObject(boolean condition, ObjectSort)` 的带条件重载。
 
 ## 3. @NavigateFlat —— 把关联表字段扁平进 VO
 

@@ -88,6 +88,17 @@ invent one that isn't here or in the user's project.
   `.asTracking()` + `updatable(entity)`; Spring `@EasyQueryTrack`.
 - CTE: `.toCteAs()`, `EntityCteViewer<T>`. JDBC listener: `JdbcExecutorListener`
   (`com.easy.query.core.basic.extension.listener`).
+- Computed columns (`computed-properties.md`): `@Column(sqlExpression = @ColumnSQLExpression(sql=, args={
+  @ExpressionArg(prop=)}))` (`com.easy.query.core.annotation`); `@Column(sqlConversion = X.class)` +
+  `ColumnValueSQLConverter` (`com.easy.query.core.basic.extension.conversion`); `@Column(autoSelect=false)`
+  for expensive cross-table stats.
+- DB-function generated key: `@Column(generatedSQLColumnGenerator = X.class)` + `GeneratedKeySQLColumnGenerator`
+  (`com.easy.query.core.basic.extension.generated`).
+- Behavior flags: `.configure(s -> s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE))` —
+  `EasyBehaviorEnum` (`com.easy.query.core.enums`).
+- Caching (`caching.md`, module `sql-cache`): `EasyCacheClient.kvStorage(...)` / `.allStorage(...)`
+  (`com.easy.query.cache.core`); `@CacheEntitySchema` (`com.easy.query.cache.core.annotation`) +
+  `CacheKvEntity` / `CacheAllEntity`.
 
 ## Dialects (`useDatabaseConfigure(...)`)
 

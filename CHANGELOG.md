@@ -5,6 +5,29 @@
 格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.2.0] - 2026-06-07
+
+继续按"官方文档梳理 + 源码查证"补齐剩余高级功能。
+
+### Added（新增）
+
+- 新增 `references/computed-properties.md`：数据库计算/派生列——`@Column(sqlExpression =
+  @ColumnSQLExpression(...))` 简单表达式、`@Column(sqlConversion = ColumnValueSQLConverter.class)`
+  复杂表达式（CASE/函数/SQL 层加密）、跨表统计子查询列（`autoSelect=false`）。
+- 新增 `references/caching.md`：`sql-cache` 模块——`EasyCacheClient` 的 `kvStorage`/`allStorage`、
+  `@CacheEntitySchema` + `CacheKvEntity`/`CacheAllEntity`、装配与失效（`EasyCacheBootstrapper` +
+  `addTriggerListener`）、一致性模式（逻辑删除延迟双删 / CDC）。
+
+### Changed（变更）
+
+- `references/dto-query.md` 的动态排序补全为已验证的 `ObjectSort` + `ObjectSortBuilder` 完整示例。
+- `references/entity-mapping.md` 新增 `@ValueObject` 值对象（扁平嵌套列）小节。
+- `references/advanced.md` 新增：数据库函数生成主键 `GeneratedKeySQLColumnGenerator`、行为开关
+  `EasyBehaviorEnum`（`.configure(...)`，含 smart-predicate 条件下推）。
+- `references/interceptors.md` 新增操作审计日志小节（字段级用 `EntityInterceptor`；完整操作日志的
+  `DatabaseInterceptor` 方案标注"未在当前源码定位到，按版本确认"）。
+- 同步更新 `SKILL.md` 路由表与 `api-index.md` 速查。
+
 ## [1.1.0] - 2026-06-07
 
 补齐高级功能内容，全部对照官方文档（easy-query-doc）梳理、再用框架源码查证。
