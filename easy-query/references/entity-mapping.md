@@ -21,6 +21,9 @@ inside `where(o -> o.title().eq(x))` — `o` is the proxy. You never hand-write 
 | `@Version(strategy = ...)` | `com.easy.query.core.annotation` | Optimistic-lock column. |
 | `@LogicDelete(strategy = ...)` | `com.easy.query.core.annotation` | Soft-delete column. |
 | `@Navigate(...)` | `com.easy.query.core.annotation` | Relation to another entity (see `relation-query.md`). |
+| `@Encryption(...)` | `com.easy.query.core.annotation` | Encrypt a column (see `type-mapping.md`). |
+| `@UpdateIgnore` / `@InsertIgnore` | `com.easy.query.core.annotation` | Exclude a field from update / insert (audit fields; see `interceptors.md`). |
+| `@ValueObject` | `com.easy.query.core.annotation` | Embed a nested value object as flattened columns. |
 
 ### `@Column` options
 
@@ -29,6 +32,9 @@ inside `where(o -> o.title().eq(x))` — `o` is the proxy. You never hand-write 
 - `value = "col_name"` — explicit column name (otherwise name-conversion applies, default snake_case).
 - `exist = false` — field is **not** a DB column (computed/transient).
 - `autoSelect` — whether the column is included in `SELECT *` by default.
+- `conversion = X.class` — value converter for enum/JSON columns (see `type-mapping.md`).
+- `typeHandler = X.class` — custom JDBC type handler (see `type-mapping.md`).
+- `primaryKeyGenerator = X.class` — auto-generate the PK on insert, e.g. UUID/snowflake (see `advanced.md`).
 
 ## A complete annotated entity (Java)
 

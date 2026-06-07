@@ -64,6 +64,31 @@ invent one that isn't here or in the user's project.
   `AbstractShardingTableModInitializer`, `queryConfiguration.applyShardingInitializer(...)`.
 - Multi-datasource: `EasyMultiEntityQuery.executeScope(name, eq -> ...)` / `setCurrent(name)` / `clear()`.
 
+## Extensions → see `interceptors.md`, `type-mapping.md`, `dto-query.md`
+
+- Interceptors (`com.easy.query.core.basic.extension.interceptor`): `EntityInterceptor`
+  (`configureInsert`/`configureUpdate`), `PredicateFilterInterceptor`, `UpdateSetInterceptor`,
+  `UpdateEntityColumnInterceptor`; base `Interceptor` (`name`/`apply`/`order`/`enable`). Register:
+  Spring `@Component`, or `configuration.applyInterceptor(...)`. `ProtectedInterceptor` survives `noInterceptor()`.
+- Value converter: `ValueConverter<P,V>` / `ValueAutoConverter`
+  (`com.easy.query.core.basic.extension.conversion`), bind `@Column(conversion = X.class)` or
+  `configuration.applyValueConverter(...)`.
+- Type handler: `JdbcTypeHandler` (`com.easy.query.core.basic.jdbc.types.handler`), bind
+  `@Column(typeHandler = X.class)`.
+- Encryption: `@Encryption(strategy=, supportQueryLike=)` (`com.easy.query.core.annotation`) +
+  `EncryptionStrategy` (`com.easy.query.core.basic.extension.encryption`) + `applyEncryptionStrategy(...)`.
+- Audit ignore: `@UpdateIgnore` / `@InsertIgnore`; nested value type `@ValueObject`
+  (all `com.easy.query.core.annotation`).
+- Request-object query: `whereObject(dto)` + `@EasyWhereCondition(type=Condition.*, propName=, propNames=,
+  tableIndex=, allowEmptyStrings=)` (`com.easy.query.core.annotation`); dynamic sort `ObjectSort`
+  (`com.easy.query.core.api.dynamic.sort`); flatten relation field `@NavigateFlat(pathAlias=)`.
+- Primary key generator: `@Column(primaryKeyGenerator = X.class)` + `PrimaryKeyGenerator`
+  (`com.easy.query.core.basic.extension.generated`).
+- Data tracking (diff update): `TrackManager` (`com.easy.query.core.basic.extension.track`) +
+  `.asTracking()` + `updatable(entity)`; Spring `@EasyQueryTrack`.
+- CTE: `.toCteAs()`, `EntityCteViewer<T>`. JDBC listener: `JdbcExecutorListener`
+  (`com.easy.query.core.basic.extension.listener`).
+
 ## Dialects (`useDatabaseConfigure(...)`)
 
 `MySQLDatabaseConfiguration` (`com.easy.query.mysql.config`, artifact `sql-mysql`),

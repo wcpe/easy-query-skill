@@ -5,6 +5,31 @@
 格式遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.1.0] - 2026-06-07
+
+补齐高级功能内容，全部对照官方文档（easy-query-doc）梳理、再用框架源码查证。
+
+### Added（新增）
+
+- 新增 `references/interceptors.md`：拦截器体系（`EntityInterceptor` / `PredicateFilterInterceptor` /
+  `UpdateSetInterceptor` / `UpdateEntityColumnInterceptor`），含**审计字段自动填充**与**多租户过滤**示例、
+  注册方式（Spring `@Component` 或 `applyInterceptor`）、`@UpdateIgnore` / `@InsertIgnore`、临时关闭与
+  `ProtectedInterceptor`。
+- 新增 `references/type-mapping.md`：字段↔列映射扩展——值转换器 `ValueConverter`/`ValueAutoConverter`
+  （枚举、JSON）、`JdbcTypeHandler`、列加密 `@Encryption` + `EncryptionStrategy`。
+- 新增 `references/dto-query.md`：基于请求对象的查询——`whereObject` + `@EasyWhereCondition`（含
+  `Condition` 取值与区间 `propName`）、动态排序 `ObjectSort`、关联字段扁平映射 `@NavigateFlat`。
+- `references/advanced.md` 扩充：自定义主键生成器 `PrimaryKeyGenerator`、数据追踪差异更新
+  `TrackManager` / `.asTracking()` / `@EasyQueryTrack`、CTE（`.toCteAs()` / `EntityCteViewer`）、
+  JDBC 监听器 `JdbcExecutorListener`（慢 SQL）、内置 SQL 函数指引。
+
+### Changed（变更）
+
+- `SKILL.md` 路由表新增 interceptors / type-mapping / dto-query 三条，并更新 advanced 覆盖范围。
+- `references/api-index.md` 新增「Extensions」速查段；`references/entity-mapping.md` 补充
+  `@Encryption` / `@UpdateIgnore` / `@InsertIgnore` / `@ValueObject` 注解与 `@Column` 的
+  `conversion` / `typeHandler` / `primaryKeyGenerator` 属性。
+
 ## [1.0.0] - 2026-06-07
 
 将原有的两个 skill 重构合并为单一的、基于可验证证据的渐进式披露 skill。

@@ -95,6 +95,89 @@ List<Order> orders = multiEntityQuery.executeScope("ds2", eq ->
         eq.queryable(Order.class).where(o -> o.status().eq(1)).toList());
 ```
 
+## Custom primary key generator (UUID / snowflake)
+
+Auto-generate the PK on insert by implementing `PrimaryKeyGenerator`
+(`com.easy.query.core.basic.extension.generated`, method `getPrimaryKey()`) and binding it on the column.
+
+```java
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
+
+// @Component   // Spring Boot auto-registers
+public class UUIDPrimaryKeyGenerator implements PrimaryKeyGenerator {
+    @Override public Serializable getPrimaryKey() { return UUID.randomUUID().toString().replace("-", ""); }
+}
+
+@Table("t_test")
+@EntityProxy
+public class Demo implements ProxyEntityAvailable<Demo, DemoProxy> {
+    @Column(primaryKey = true, primaryKeyGenerator = UUIDPrimaryKeyGenerator.class)
+    private String id;
+}
+```
+For a snowflake id, return `String.valueOf(snowflake.nextId())` from `getPrimaryKey()`.
+
+## Data tracking — diff update (only changed columns)
+
+By default `updatable(entity)` updates all columns. With a tracking context, easy-query updates **only the
+columns that actually changed** since the entity was queried. Use `TrackManager`
+(`com.easy.query.core.basic.extension.track`) + `.asTracking()` on the query.
+
+```java
+TrackManager tm = easyEntityQuery.getRuntimeContext().getTrackManager();
+try {
+    tm.begin();
+    SysUser u = easyEntityQuery.queryable(SysUser.class).asTracking().whereById("1").firstOrNull();
+    u.setPhone("13900000000");                 // change one field
+    easyEntityQuery.updatable(u).executeRows(); // UPDATE ... SET phone = ? WHERE id = ?  (only phone)
+} finally {
+    tm.release();
+}
+```
+In Spring Boot, annotate the service method with `@EasyQueryTrack` instead of the manual begin/release.
+
+## CTE (WITH clause)
+
+Turn a queryable into a CTE with `.toCteAs()` and reuse it in joins:
+
+```java
+EntityQueryable<TopicProxy, Topic> cte = easyEntityQuery.queryable(Topic.class)
+        .where(t -> t.id().eq("456"))
+        .toCteAs();
+List<Topic> list = easyEntityQuery.queryable(Topic.class)
+        .leftJoin(cte, (t, c) -> t.id().eq(c.id()))
+        .toList();   // WITH with_Topic AS (...) SELECT ... LEFT JOIN with_Topic ...
+```
+For a reusable CTE "view" with window functions, an entity can implement `EntityCteViewer<T>` and define its
+query in `viewConfigure(...)` — see docs.
+
+## JDBC listener — log slow SQL / metrics
+
+Implement `JdbcExecutorListener` (`com.easy.query.core.basic.extension.listener`) to hook every execution
+(SQL, params, elapsed, exception). Register via `replaceService(JdbcExecutorListener.class, listener)` at
+bootstrap (Spring Boot: `@Component`).
+
+```java
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+
+public class SlowSqlListener implements JdbcExecutorListener {
+    @Override public boolean enable() { return true; }
+    @Override public void onExecuteBefore(JdbcExecuteBeforeArg arg) { }
+    @Override public void onExecuteAfter(JdbcExecuteAfterArg after) {
+        long ms = after.getEnd() - after.getBeforeArg().getStart();
+        if (ms >= 200) log.warn("slow sql {}ms: {}", ms, after.getBeforeArg().getSql());
+    }
+}
+```
+(This is the same listener mechanism the test suite uses to capture and assert SQL — see `testing.md` §3.)
+
+## Built-in SQL functions
+
+The proxy DSL exposes DB functions on column accessors (string/number/date/json/math), e.g.
+`o.name().length()`, `o.createTime().format("yyyy-MM-dd")`, `o.title().like(...)`, used inside `where` / `select`
+/ `orderBy`. The exact catalog per category is in the docs (`easy-query-doc/src/func/*`); look it up there
+rather than guessing a function name.
+
 ## Common mistakes
 
 - Building a non-grouped aggregate with `groupBy(...).select(...)` machinery — use the `sumOrNull`/`maxOrNull`
@@ -107,6 +190,9 @@ List<Order> orders = multiEntityQuery.executeScope("ds2", eq ->
 - 源码验证: `sql-test/.../dameng/DamengQueryTest.java` (groupBy/aggregate), `EntityQueryAggregateTest1.java`
   (sumOrNull/maxOrNull), `h2/domain/ALLTYPESharding.java` + `h2/sharding/AllTYPEShardingInitializer.java` +
   `h2/H2BaseTest.java` (`applyShardingInitializer`). `DatabaseCodeFirst`/`CodeFirstCommand` @
-  `com.easy.query.core.basic.api.database`.
+  `com.easy.query.core.basic.api.database`. `PrimaryKeyGenerator` @ `com.easy.query.core.basic.extension.generated`;
+  `TrackManager` @ `com.easy.query.core.basic.extension.track`; `JdbcExecutorListener` @
+  `com.easy.query.core.basic.extension.listener`.
 - 官方文档: `easy-query-doc/src/ability/select/group.md`, `src/super/*` (sharding),
-  `src/guide/sb-multi-datasource.md`, `src/guide/spring-boot.md` (code-first). Skill baseline 3.1.89-dev.
+  `src/guide/sb-multi-datasource.md`, `src/guide/spring-boot.md` (code-first),
+  `src/adv/{auto-key,data-tracking,cte,jdbc-listener}.md`, `src/func/*` (SQL functions).
