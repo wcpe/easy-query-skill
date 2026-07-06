@@ -1,23 +1,7 @@
 ---
 name: easy-query
 description: >-
-  Write, modify, review, debug, or test Java/Kotlin code that uses the easy-query
-  ORM — the library published under the `com.easy-query` group id and used via
-  `EasyEntityQuery` / `EasyQueryClient` / `easyEntityQuery` (a.k.a. EasyQuery, a
-  strong-typed 国产 ORM). Use this skill whenever the task involves easy-query
-  entities/proxy generation, proxy-DSL queries, inserts/updates/deletes,
-  pagination, transactions, relation/@Navigate/include queries, sharding,
-  multi-datasource, code-first DDL, or writing unit tests for easy-query code —
-  in plain Java, Kotlin (KSP), or Spring Boot. Trigger even when the user does
-  not name easy-query but the code clearly uses its proxy DSL (e.g.
-  `easyEntityQuery.queryable(X.class).where(o -> o.field().eq(v))` or Kotlin
-  `where { it.field().eq(v) }`), asks how to query/insert/page/test "this ORM" in
-  a project that depends on easy-query, or asks to migrate MyBatis/JPA code TO
-  easy-query. Do NOT use it for other persistence tools that merely share
-  keywords — MyBatis / MyBatis-Plus (QueryWrapper), JPA / Hibernate
-  (CriteriaBuilder), Spring Data JPA, jOOQ, QueryDSL, SQLAlchemy, raw-SQL tuning,
-  Elasticsearch query DSL, or @tanstack/react-query — unless the task is
-  explicitly about converting that code to easy-query.
+  在编写、修改、审查、调试或测试使用 EasyQuery ORM 的 Java、Kotlin、Spring Boot 代码时使用。覆盖实体与代理生成、代理 DSL 查询、插入更新删除、分页、事务、关系查询、多数据源、代码优先 DDL 和单元测试。项目依赖 com.easy-query，或代码使用 EasyEntityQuery、EasyQueryClient、easyEntityQuery、Kotlin where DSL 时应触发；仅在明确迁移到 EasyQuery 时处理 MyBatis、JPA、jOOQ、QueryDSL、SQLAlchemy、raw SQL 等其他持久化技术。
 ---
 
 # EasyQuery skill
